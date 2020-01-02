@@ -10,11 +10,21 @@ using System.Windows.Forms;
 
 namespace Session6
 {
-    public partial class Form1 : Form
+    public partial class InventoryDashboard : Form
     {
-        public Form1()
+        public InventoryDashboard()
         {
             InitializeComponent();
+        }
+
+        private void groupBox3_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void closeBtn_Click(object sender, EventArgs e)
+        {
+            Close();
         }
     }
 }
