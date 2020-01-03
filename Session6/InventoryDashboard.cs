@@ -76,16 +76,11 @@ namespace Session6
 
 
                         var getDetailsOfSpending1 = (from x in getDetailsOfSpending
-                                                     where x.Date.ToString("yyyy-MM") == date                                                     
-                                                     select new { spending = x.OrderItems.Sum(p => p.Amount * p.UnitPrice) }).FirstOrDefault();
-                        if (getDetailsOfSpending1 == null)
-                        {
-                            row.Add("0");
-                        }
-                        else
-                        {
-                            row.Add(getDetailsOfSpending1.spending.ToString());
-                        }
+                                                     where x.Date.ToString("yyyy-MM") == date
+                                                     select x.OrderItems.Sum(p => p.Amount * p.UnitPrice)).Sum().Value.ToString("0");
+
+                        row.Add(getDetailsOfSpending1);
+
 
 
 
