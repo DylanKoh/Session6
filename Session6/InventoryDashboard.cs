@@ -86,42 +86,7 @@ namespace Session6
                     spendList.Rows.Add(row.ToArray());
                 }
 
-                /* foreach (var item1 in getDistinctDates.Select(x => x.date).Distinct().Take(10))
-                 {
-                     spendList.Columns.Add(item1, item1);
-
-                     foreach (var departments in getDepartment.Select(x => x).Distinct())
-                     {
-
-                         var getDetailsOfSpending = (from x in context.Orders
-                                                     select x).ToList();
-
-                         var dID = (from x in context.Departments
-                                    where x.Name.Equals(departments)
-                                    select x.ID).First();
-
-                         var getDetailsOfSpending1 = (from x in getDetailsOfSpending
-                                                      where x.Date.ToString("yyyy-MM") == item1 && x.EmergencyMaintenance.EMStartDate != null && x.EmergencyMaintenance.EMEndDate != null
-                                                      where x.EmergencyMaintenance.Asset.DepartmentLocation.DepartmentID == dID
-                                                      select new { spending = x.OrderItems.Sum(p => p.Amount * p.UnitPrice), deptName = departments });
-
-
-                         List<string> vs = new List<string>();
-
-                         *//*foreach (var departmentCheck in getDetailsOfSpending1.Select(x => x.deptName).Distinct())
-                         {
-                             vs.Add(departmentCheck);
-
-                             foreach (var item in getDetailsOfSpending1.Where(x => x.deptName == departmentCheck).Select(x => x.spending))
-                             {
-                                 vs.Add(item.ToString());
-                                 spendList.Rows.Add(vs.ToArray());
-                             }
-                         }*//*
-
-
-
-                     }*/
+                
             }
 
 
