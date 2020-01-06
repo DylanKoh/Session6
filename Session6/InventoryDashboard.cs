@@ -26,6 +26,15 @@ namespace Session6
         private void InventoryDashboard_Load(object sender, EventArgs e)
         {
             GridRefresh();
+
+            List<string> languages = new List<string>()
+            {
+                "English", "Chinese", "Malay"
+            };
+
+            languageBoc.Items.AddRange(languages.ToArray());
+
+            languageBoc.SelectedItem = "English";
         }
 
         private void GridRefresh()
@@ -38,6 +47,11 @@ namespace Session6
 
             costlyAssetList.ColumnCount = 1;
             costlyAssetList.Columns[0].Name = "Asset Name / Month";
+
+            spendList.Rows.Clear();
+            mostUsedList.Rows.Clear();
+            costlyAssetList.Rows.Clear();
+
             using (var context = new Session6Entities())
             {
                 var getDepartment = (from x in context.Orders
@@ -53,6 +67,7 @@ namespace Session6
                 var getDistinctDates = (from x in getDepartmentSpendingGrouping
                                         select new { date = x.intDate.ToString("yyyy-MM") }).ToList().Select(x => x.date).Distinct().Take(10);
 
+                #region 1st DGV Loading
                 foreach (var date in getDistinctDates)
                 {
                     spendList.Columns.Add(date, date);
@@ -88,11 +103,14 @@ namespace Session6
 
                     spendList.Rows.Add(row.ToArray());
                 }
+                #endregion
 
+                #region 2nd DGV Loading
                 List<string> noteList = new List<string>()
                 {
                     "Highest Cost", "Most Number"
                 };
+
                 foreach (var notes in noteList)
                 {
                     List<string> rows = new List<string>();
@@ -106,7 +124,7 @@ namespace Session6
                         if (notes == "Highest Cost")
                         {
 
-                           
+
                             List<decimal> comparison = new List<decimal>();
                             List<string> comparisonName = new List<string>();
                             foreach (var parts in getParts)
@@ -168,9 +186,108 @@ namespace Session6
                     mostUsedList.Rows.Add(rows.ToArray());
                 }
 
+                #endregion
 
+                #region 3rd DGV Loading
+
+                List<string> main = new List<string>()
+                {
+                    "Asset", "Department"
+                };
+
+                foreach (var label in main)
+                {
+                    List<string> row = new List<string>();
+                    row.Add(label);
+
+                    foreach (var dates in getDistinctDates)
+                    {
+                        if (label == "Asset")
+                        {
+                            List<string> Assets = new List<string>();
+                            List<decimal> CostTotal = new List<decimal>();
+
+                            var getAsset = (from x in context.Assets
+                                            select x.AssetName);
+
+                            foreach (var Asset in getAsset)
+                            {
+                                var initialQuery = (from x in context.Orders
+                                                    where x.EmergencyMaintenance.EMStartDate != null && x.EmergencyMaintenance.EMEndDate != null
+                                                    select x).ToList();
+
+                                var getCostly = (from x in initialQuery
+                                                 where x.Date.ToString("yyyy-MM") == dates && x.EmergencyMaintenance.Asset.AssetName == Asset
+                                                 select x.OrderItems.Sum(y => y.Amount * y.UnitPrice)).Sum().Value;
+
+                                Assets.Add(Asset);
+                                CostTotal.Add(getCostly);
+
+                            }
+
+                            var getHighest = CostTotal.Max();
+                            int index = CostTotal.FindIndex(x => x == getHighest);
+                            var getAssetName = Assets[index];
+                            row.Add(getAssetName);
+
+
+
+                        }
+
+                        else
+                        {
+                            List<string> Department = new List<string>();
+
+                            List<decimal> CostTotal = new List<decimal>();
+
+                            var getAsset = (from x in context.Assets
+                                            select x.AssetName);
+
+                            foreach (var Asset in getAsset)
+                            {
+                                var initialQuery = (from x in context.Orders
+                                                    where x.EmergencyMaintenance.EMStartDate != null && x.EmergencyMaintenance.EMEndDate != null
+                                                    select x).ToList();
+
+                                var getCostly = (from x in initialQuery
+                                                 where x.Date.ToString("yyyy-MM") == dates && x.EmergencyMaintenance.Asset.AssetName == Asset
+                                                 select x.OrderItems.Sum(y => y.Amount * y.UnitPrice)).Sum().Value;
+
+                                var getDepartmentOfAsset = (from x in initialQuery
+                                                            where x.Date.ToString("yyyy-MM") == dates && x.EmergencyMaintenance.Asset.AssetName == Asset
+                                                            select x.EmergencyMaintenance.Asset.DepartmentLocation.Department.Name).FirstOrDefault();
+
+                                Department.Add(getDepartmentOfAsset);
+
+                                CostTotal.Add(getCostly);
+
+                            }
+
+                            var getHighest = CostTotal.Max();
+                            int index = CostTotal.FindIndex(x => x == getHighest);
+                            var getDepartmentName = Department[index];
+                            row.Add(getDepartmentName);
+                        }
+
+                    }
+                    costlyAssetList.Rows.Add(row.ToArray());
+
+                }
+
+                #endregion
             }
 
+
+        }
+
+        private void inventCBtn_Click(object sender, EventArgs e)
+        {
+            (new InventoryControl()).ShowDialog();
+            GridRefresh();
+        }
+
+        private void languageBoc_SelectedIndexChanged(object sender, EventArgs e)
+        {
 
         }
     }
