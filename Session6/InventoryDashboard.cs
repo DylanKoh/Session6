@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
@@ -326,6 +327,60 @@ namespace Session6
                     costlyAssetList.Rows.Add(row.ToArray());
 
                 }
+
+                #endregion
+
+                #region Coloring 1st DGV
+                List<decimal> listToCompare = new List<decimal>();
+                List<decimal> remove0 = new List<decimal>() { 0 };
+                foreach (DataGridViewColumn columns in spendList.Columns)
+                {
+
+                    foreach (DataGridViewRow rows in spendList.Rows)
+                    {
+                        if (columns.Index != 0)
+                        {
+                            listToCompare.Add(Convert.ToDecimal(spendList.Rows[rows.Index].Cells[columns.Index].Value));
+                        }
+
+
+                    }
+                    var refineQuery = (from x in listToCompare
+                                       select x).Except(new List<decimal>() { 0 }).ToList();
+                    var getCount = refineQuery.Count();
+
+                    if (getCount != 0)
+                    {
+                        var getMax = refineQuery.Max();
+                        var getLowest = refineQuery.Min();
+
+                        foreach (DataGridViewRow item in spendList.Rows)
+                        {
+                            if (Convert.ToDecimal(item.Cells[columns.Index].Value) == getMax)
+                            {
+                                item.Cells[columns.Index].Style.ForeColor = Color.Green;
+                            }
+                            else if (Convert.ToDecimal(item.Cells[columns.Index].Value) == getLowest)
+                            {
+                                item.Cells[columns.Index].Style.ForeColor = Color.Red;
+                            }
+                            else if (Convert.ToDecimal(item.Cells[columns.Index].Value) == getMax && Convert.ToDecimal(item.Cells[columns.Index].Value) == getLowest)
+                            {
+                                item.Cells[columns.Index].Style.ForeColor = Color.Red;
+                            }
+                        }
+                    }
+                    
+
+                }
+
+
+
+
+
+
+
+
 
                 #endregion
             }
