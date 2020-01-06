@@ -100,11 +100,13 @@ namespace Session6
 
                     foreach (var dates in getDistinctDates)
                     {
+                        var getParts = (from x in context.Parts
+                                        select x.Name).ToList();
+
                         if (notes == "Highest Cost")
                         {
 
-                            var getParts = (from x in context.Parts
-                                            select x.Name).ToList();
+                           
                             List<decimal> comparison = new List<decimal>();
                             List<string> comparisonName = new List<string>();
                             foreach (var parts in getParts)
@@ -115,14 +117,10 @@ namespace Session6
 
                                 var getCost = (from x in initialQuery
                                                where x.Date.ToString("yyyy-MM") == dates
-                                               select new
-                                               {
-                                                   cost = x.OrderItems.Where(y => y.Part.Name == parts).Sum(p => p.Amount * p.UnitPrice),
-                                                   part = parts
-                                               }).FirstOrDefault();
+                                               select x.OrderItems.Where(y => y.Part.Name == parts).Sum(p => p.Amount * p.UnitPrice)).Sum();
 
-                                comparison.Add(Convert.ToDecimal(getCost.cost));
-                                comparisonName.Add(getCost.part);
+                                comparison.Add(Convert.ToDecimal(getCost));
+                                comparisonName.Add(parts);
                             }
 
                             var getHighest = comparison.Max();
@@ -135,6 +133,35 @@ namespace Session6
 
 
 
+                        }
+
+                        else
+                        {
+                            List<decimal> NumberOfTransaction = new List<decimal>();
+                            List<string> comparisonName = new List<string>();
+                            foreach (var parts in getParts)
+                            {
+                                var initialQuery = (from x in context.Orders
+                                                    where x.EmergencyMaintenance.EMStartDate != null && x.EmergencyMaintenance.EMEndDate != null
+                                                    select x).ToList();
+
+                                var getCount = (from x in initialQuery
+                                                where x.Date.ToString("yyyy-MM") == dates
+                                                where x.TransactionTypeID == 3
+                                                select x.OrderItems.Where(y => y.Part.Name == parts).Sum(y => y.Amount)).Sum();
+
+                                NumberOfTransaction.Add(getCount);
+                                comparisonName.Add(parts);
+
+                            }
+
+                            var getHighest = NumberOfTransaction.Max();
+
+                            int index = NumberOfTransaction.FindIndex(x => x == getHighest);
+
+                            var getPartName = comparisonName[index];
+
+                            rows.Add(getPartName);
                         }
 
                     }
