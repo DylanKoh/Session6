@@ -105,6 +105,24 @@ namespace Session6
                 }
                 #endregion
 
+                #region PieChart Load
+                pieChart.Series["s1"].Points.Clear();
+
+
+                var getSpendingsOfDepartment = (from x in context.Orders
+                                                where x.EmergencyMaintenance.EMStartDate != null && x.EmergencyMaintenance.EMEndDate != null
+                                                group x by x.EmergencyMaintenance.Asset.DepartmentLocation.Department.Name into q
+                                                select new { spendings = q.Sum(y => y.OrderItems.Sum(z => z.UnitPrice * z.Amount)), DeptName = q.Key });
+                foreach (var r in getSpendingsOfDepartment)
+                {
+                    var index = pieChart.Series["s1"].Points.AddY(r.spendings);
+                    pieChart.Series["s1"].Points[index].Label = r.DeptName;
+                }
+                #endregion
+
+
+
+
                 #region 2nd DGV Loading
                 List<string> noteList = new List<string>()
                 {
@@ -276,6 +294,8 @@ namespace Session6
 
                 #endregion
             }
+
+
 
 
         }
