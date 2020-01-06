@@ -28,12 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend3 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea4 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend4 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.spendList = new System.Windows.Forms.DataGridView();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
@@ -96,32 +95,33 @@
             // 
             // pieChart
             // 
-            chartArea1.Name = "ChartArea1";
-            this.pieChart.ChartAreas.Add(chartArea1);
+            chartArea3.Name = "ChartArea1";
+            this.pieChart.ChartAreas.Add(chartArea3);
             this.pieChart.Dock = System.Windows.Forms.DockStyle.Fill;
-            legend1.Name = "Legend1";
-            this.pieChart.Legends.Add(legend1);
+            legend3.Name = "Legend1";
+            this.pieChart.Legends.Add(legend3);
             this.pieChart.Location = new System.Drawing.Point(4, 19);
             this.pieChart.Margin = new System.Windows.Forms.Padding(4);
             this.pieChart.Name = "pieChart";
             this.pieChart.Palette = System.Windows.Forms.DataVisualization.Charting.ChartColorPalette.None;
-            series1.ChartArea = "ChartArea1";
-            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Pie;
-            series1.Legend = "Legend1";
-            series1.Name = "s1";
-            this.pieChart.Series.Add(series1);
+            series2.ChartArea = "ChartArea1";
+            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Pie;
+            series2.Legend = "Legend1";
+            series2.Name = "s1";
+            this.pieChart.Series.Add(series2);
             this.pieChart.Size = new System.Drawing.Size(573, 281);
             this.pieChart.TabIndex = 0;
             this.pieChart.Text = "chart1";
             // 
             // groupBox3
             // 
+            this.groupBox3.AutoSize = true;
             this.groupBox3.Controls.Add(this.barChart);
             this.groupBox3.Location = new System.Drawing.Point(1025, 326);
             this.groupBox3.Margin = new System.Windows.Forms.Padding(4);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Padding = new System.Windows.Forms.Padding(4);
-            this.groupBox3.Size = new System.Drawing.Size(581, 284);
+            this.groupBox3.Size = new System.Drawing.Size(870, 284);
             this.groupBox3.TabIndex = 2;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Monthly Department Spending";
@@ -129,19 +129,15 @@
             // 
             // barChart
             // 
-            chartArea2.Name = "ChartArea1";
-            this.barChart.ChartAreas.Add(chartArea2);
+            chartArea4.Name = "ChartArea1";
+            this.barChart.ChartAreas.Add(chartArea4);
             this.barChart.Dock = System.Windows.Forms.DockStyle.Fill;
-            legend2.Name = "Legend1";
-            this.barChart.Legends.Add(legend2);
+            legend4.Name = "Legend1";
+            this.barChart.Legends.Add(legend4);
             this.barChart.Location = new System.Drawing.Point(4, 19);
             this.barChart.Margin = new System.Windows.Forms.Padding(4);
             this.barChart.Name = "barChart";
-            series2.ChartArea = "ChartArea1";
-            series2.Legend = "Legend1";
-            series2.Name = "Series1";
-            this.barChart.Series.Add(series2);
-            this.barChart.Size = new System.Drawing.Size(573, 261);
+            this.barChart.Size = new System.Drawing.Size(862, 261);
             this.barChart.TabIndex = 0;
             this.barChart.Text = "chart1";
             // 
@@ -228,7 +224,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1639, 625);
+            this.ClientSize = new System.Drawing.Size(1908, 625);
             this.Controls.Add(this.languageBoc);
             this.Controls.Add(this.closeBtn);
             this.Controls.Add(this.inventCBtn);
@@ -252,6 +248,7 @@
             this.groupBox5.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.costlyAssetList)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 

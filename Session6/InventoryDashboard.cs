@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Windows.Forms;
+using System.Windows.Forms.DataVisualization.Charting;
 
 namespace Session6
 {
@@ -120,7 +121,41 @@ namespace Session6
                 }
                 #endregion
 
+                #region Bar graph load
 
+                barChart.Series.Clear();
+
+                var initialQuery1 = (from x in context.Orders
+                                     where x.EmergencyMaintenance.EMStartDate != null && x.EmergencyMaintenance.EMEndDate != null
+                                     select x).ToList();
+                foreach (var departments in getDepartment.Select(x => x).Distinct())
+                {
+                    barChart.Series.Add(new Series(departments));
+                    barChart.ChartAreas["ChartArea1"].AxisX.LabelStyle.Interval = 1;
+                    foreach (var dates in getDistinctDates)
+                    {
+                        var getPoints = (from x in initialQuery1
+                                         where x.Date.ToString("yyyy-MM") == dates && x.EmergencyMaintenance.Asset.DepartmentLocation.Department.Name == departments
+                                         select x.OrderItems.Sum(z => z.UnitPrice * z.Amount).Value).Sum();
+
+
+                        if (getPoints == 0)
+                        {
+                            barChart.Series[departments].Points.AddXY(dates, 0);
+
+                        }
+                        else
+                        {
+                            barChart.Series[departments].Points.AddXY(dates, getPoints);
+                        }
+
+
+
+                    }
+                }
+
+
+                #endregion
 
 
                 #region 2nd DGV Loading
