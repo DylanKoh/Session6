@@ -331,11 +331,11 @@ namespace Session6
                 #endregion
 
                 #region Coloring 1st DGV
-                List<decimal> listToCompare = new List<decimal>();
+                
                 List<decimal> remove0 = new List<decimal>() { 0 };
                 foreach (DataGridViewColumn columns in spendList.Columns)
                 {
-
+                    List<decimal> listToCompare = new List<decimal>();
                     foreach (DataGridViewRow rows in spendList.Rows)
                     {
                         if (columns.Index != 0)
@@ -347,12 +347,16 @@ namespace Session6
                     }
                     var refineQuery = (from x in listToCompare
                                        select x).Except(new List<decimal>() { 0 }).ToList();
+                    Console.WriteLine(listToCompare);
                     var getCount = refineQuery.Count();
 
                     if (getCount != 0)
                     {
                         var getMax = refineQuery.Max();
                         var getLowest = refineQuery.Min();
+
+                        Console.WriteLine(getMax);
+                        Console.WriteLine(getLowest);
 
                         foreach (DataGridViewRow item in spendList.Rows)
                         {
