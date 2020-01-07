@@ -28,17 +28,20 @@ namespace Session6
             allocatedList.Columns[3].Name = "Amount";
             allocatedList.Columns[4].Name = "ID";
             allocatedList.Columns[4].Visible = false;
+
+            allocatedList.Rows.Clear();
             using (var context = new Session6Entities())
             {
                 var amount = Decimal.Parse(amtBox.Text);
                 var selectedPart = partBox.SelectedItem.ToString();
+                
                 if (aMethodBox.SelectedItem.ToString() == "LIFO")
                 {
                     var getPart = (from x in context.OrderItems
                                    where x.Part.Name == selectedPart
                                    orderby x.Order.Date descending
                                    where x.Amount <= amount
-                                   select new { Name = x.Part.Name, BatchNumber = x.BatchNumber, unitPrice = x.UnitPrice, Amount = x.Amount, ID = x.ID });
+                                   select new { Name = x.Part.Name, BatchNumber = x.BatchNumber, unitPrice = x.UnitPrice, Amount = x.Amount, ID = x.OrderID });
 
                     decimal amtToAdd = 0;
                     while (amtToAdd <= amount)
@@ -64,7 +67,7 @@ namespace Session6
                                    where x.Part.Name == selectedPart
                                    orderby x.Order.Date ascending
                                    where x.Amount <= amount
-                                   select new { Name = x.Part.Name, BatchNumber = x.BatchNumber, unitPrice = x.UnitPrice, Amount = x.Amount, ID = x.ID });
+                                   select new { Name = x.Part.Name, BatchNumber = x.BatchNumber, unitPrice = x.UnitPrice, Amount = x.Amount, ID = x.OrderID });
                     decimal amtToAdd = 0;
                     while (amtToAdd <= amount)
                     {
@@ -88,7 +91,7 @@ namespace Session6
                                    where x.Part.Name == selectedPart
                                    orderby x.UnitPrice * x.Amount ascending
                                    where x.Amount <= amount
-                                   select new { Name = x.Part.Name, BatchNumber = x.BatchNumber, unitPrice = x.UnitPrice, Amount = x.Amount, ID = x.ID });
+                                   select new { Name = x.Part.Name, BatchNumber = x.BatchNumber, unitPrice = x.UnitPrice, Amount = x.Amount, ID = x.OrderID });
                     decimal amtToAdd = 0;
                     while (amtToAdd <= amount)
                     {
@@ -112,7 +115,33 @@ namespace Session6
 
         private void assignBtn_Click(object sender, EventArgs e)
         {
+            assignedList.ColumnCount = 5;
+            assignedList.Columns[0].Name = "Name";
+            assignedList.Columns[1].Name = "Batch Number";
+            assignedList.Columns[2].Name = "Unit Price";
+            assignedList.Columns[3].Name = "Amount";
+            assignedList.Columns[4].Name = "ID";
+            assignedList.Columns[4].Visible = false;
 
+            DataGridViewLinkColumn dgvLC = new DataGridViewLinkColumn()
+            {
+                UseColumnTextForLinkValue = true,
+                HeaderText = "Action",
+                Name = "Action",
+                Text = "Remove"
+            };
+
+            assignedList.Columns.Add(dgvLC);
+            foreach (DataGridViewRow rows in allocatedList.Rows)
+            {
+                List<string> rowList = new List<string>()
+                {
+                    rows.Cells[0].Value.ToString(), rows.Cells[1].Value.ToString(), rows.Cells[2].Value.ToString(),
+                    rows.Cells[3].Value.ToString(), rows.Cells[4].Value.ToString()
+                };
+
+                assignedList.Rows.Add(rowList.ToArray());
+            }
         }
 
         private void cancelBtn_Click(object sender, EventArgs e)
@@ -191,6 +220,72 @@ namespace Session6
                     }
 
                     partBox.Items.AddRange(partList.ToArray());
+                }
+            }
+        }
+
+        private void assignedList_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.ColumnIndex == 5)
+            {
+                var getRowIndex = e.RowIndex;
+                assignedList.Rows.RemoveAt(getRowIndex);
+            }
+        }
+
+        private void submitBtn_Click(object sender, EventArgs e)
+        {
+            foreach (DataGridViewRow item in assignedList.Rows)
+            {
+                if (item == null)
+                {
+                    MessageBox.Show("A part needs to be allocated to submit changes to Database!",
+                        "No changes made!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+                else
+                {
+                    using (var context = new Session6Entities())
+                    {
+                        var part = item.Cells[0].Value.ToString();
+                        var getPartID = (from x in context.Parts
+                                         where x.Name == part
+                                         select x.ID).FirstOrDefault();
+
+
+                        if (item.Cells[1].Value.ToString() != "")
+                        {
+                            context.OrderItems.Add(new OrderItem()
+                            {
+                                PartID = getPartID,
+                                BatchNumber = item.Cells[1].Value.ToString(),
+                                UnitPrice = Convert.ToDecimal(item.Cells[2].Value),
+                                Amount = Convert.ToDecimal(item.Cells[3].Value),
+                                OrderID = Convert.ToInt64(item.Cells[4].Value)
+                            });
+                        }
+
+                        else
+                        {
+                            context.OrderItems.Add(new OrderItem()
+                            {
+                                PartID = getPartID,
+                                UnitPrice = Convert.ToDecimal(item.Cells[2].Value),
+                                Amount = Convert.ToDecimal(item.Cells[3].Value),
+                                OrderID = Convert.ToInt64(item.Cells[4].Value)
+                            });
+                        }
+                        
+
+                        var orderID = Convert.ToInt64(item.Cells[4].Value);
+
+                        var updateOrders = (from x in context.Orders
+                                            where x.ID == orderID
+                                            select new { x }).First();
+
+                        updateOrders.x.Date = dateBox.Value;
+                        context.SaveChanges();
+                        this.Close();
+                    }
                 }
             }
         }

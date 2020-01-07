@@ -204,6 +204,8 @@
             // 
             // allocatedList
             // 
+            this.allocatedList.AllowUserToAddRows = false;
+            this.allocatedList.AllowUserToDeleteRows = false;
             this.allocatedList.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.allocatedList.Dock = System.Windows.Forms.DockStyle.Fill;
             this.allocatedList.Location = new System.Drawing.Point(3, 16);
@@ -235,6 +237,8 @@
             // 
             // assignedList
             // 
+            this.assignedList.AllowUserToAddRows = false;
+            this.assignedList.AllowUserToDeleteRows = false;
             this.assignedList.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.assignedList.Dock = System.Windows.Forms.DockStyle.Fill;
             this.assignedList.Location = new System.Drawing.Point(3, 16);
@@ -242,6 +246,7 @@
             this.assignedList.RowHeadersWidth = 51;
             this.assignedList.Size = new System.Drawing.Size(936, 182);
             this.assignedList.TabIndex = 0;
+            this.assignedList.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.assignedList_CellContentClick);
             // 
             // submitBtn
             // 
@@ -251,6 +256,7 @@
             this.submitBtn.TabIndex = 7;
             this.submitBtn.Text = "Submit";
             this.submitBtn.UseVisualStyleBackColor = true;
+            this.submitBtn.Click += new System.EventHandler(this.submitBtn_Click);
             // 
             // cancelBtn
             // 
