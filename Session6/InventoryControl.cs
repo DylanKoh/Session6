@@ -63,8 +63,27 @@ namespace Session6
                 warehouseBox.Items.AddRange(getWarehouse.ToArray());
                 warehouseBox.SelectedItem = getWarehouse.First();
 
+                
+
+            }
+        }
+
+        private void partBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+
+
+
+
+        }
+
+        private void partBox_Click(object sender, EventArgs e)
+        {
+            using (var context = new Session6Entities())
+            {
                 if (warehouseBox.SelectedItem != null)
                 {
+                    partBox.Items.Clear();
                     var warehouseName = warehouseBox.SelectedItem.ToString();
 
                     var getWarehouseID = (from x in context.Warehouses
@@ -83,7 +102,6 @@ namespace Session6
 
                     partBox.Items.AddRange(partList.ToArray());
                 }
-                
             }
         }
     }

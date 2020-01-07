@@ -363,15 +363,21 @@ namespace Session6
                             if (Convert.ToDecimal(item.Cells[columns.Index].Value) == getMax)
                             {
                                 item.Cells[columns.Index].Style.ForeColor = Color.Green;
+
+                                if (Convert.ToDecimal(item.Cells[columns.Index].Value) == getLowest)
+                                {
+                                    item.Cells[columns.Index].Style.ForeColor = Color.Red;
+                                }
                             }
                             else if (Convert.ToDecimal(item.Cells[columns.Index].Value) == getLowest)
                             {
                                 item.Cells[columns.Index].Style.ForeColor = Color.Red;
+                                if (Convert.ToDecimal(item.Cells[columns.Index].Value) == getMax)
+                                {
+                                    item.Cells[columns.Index].Style.ForeColor = Color.Red;
+                                }
                             }
-                            else if (Convert.ToDecimal(item.Cells[columns.Index].Value) == getMax && Convert.ToDecimal(item.Cells[columns.Index].Value) == getLowest)
-                            {
-                                item.Cells[columns.Index].Style.ForeColor = Color.Red;
-                            }
+                            
                         }
                     }
                     
@@ -388,14 +394,6 @@ namespace Session6
 
                 #endregion
 
-                #region Color DGV 1
-
-                foreach (var item in spendList.Columns)
-                {
-
-                }
-
-                #endregion
             }
 
 
