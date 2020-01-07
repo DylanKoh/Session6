@@ -328,6 +328,15 @@ namespace Session6
                 }
 
                 #endregion
+
+                #region Color DGV 1
+
+                foreach (var item in spendList.Columns)
+                {
+
+                }
+
+                #endregion
             }
 
 
