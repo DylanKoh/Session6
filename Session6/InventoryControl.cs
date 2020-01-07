@@ -45,11 +45,13 @@ namespace Session6
             using (var context = new Session6Entities())
             {
                 var getAsset = (from x in context.Assets
-                                select new { Asset = x.AssetName + " (" + x.AssetSN + ")" }).Distinct();
+                                join y in context.EmergencyMaintenances on x.ID equals y.AssetID
+                                where y.EMStartDate != null && y.EMEndDate == null
+                                select new { Asset = x.AssetName, EM = y.ID });
                 List<string> assets = new List<string>();
                 foreach (var item in getAsset)
                 {
-                    assets.Add(item.Asset);
+                    assets.Add(item.Asset + " (" + item.EM + ")");
                 }
 
                 assetBox.Items.AddRange(assets.ToArray());
@@ -60,6 +62,28 @@ namespace Session6
 
                 warehouseBox.Items.AddRange(getWarehouse.ToArray());
                 warehouseBox.SelectedItem = getWarehouse.First();
+
+                if (warehouseBox.SelectedItem != null)
+                {
+                    var warehouseName = warehouseBox.SelectedItem.ToString();
+
+                    var getWarehouseID = (from x in context.Warehouses
+                                          where x.Name.Equals(warehouseName)
+                                          select x.ID).FirstOrDefault();
+
+                    var getParts = (from x in context.Orders
+                                    where x.SourceWarehouseID == getWarehouseID
+                                    join y in context.OrderItems on x.ID equals y.OrderID
+                                    select y.Part.Name).Distinct();
+                    List<string> partList = new List<string>();
+                    foreach (var parts in getParts)
+                    {
+                        partList.Add(parts);
+                    }
+
+                    partBox.Items.AddRange(partList.ToArray());
+                }
+                
             }
         }
     }
