@@ -21,6 +21,93 @@ namespace Session6
         private void allocateBtn_Click(object sender, EventArgs e)
         {
 
+            allocatedList.ColumnCount = 5;
+            allocatedList.Columns[0].Name = "Name";
+            allocatedList.Columns[1].Name = "Batch Number";
+            allocatedList.Columns[2].Name = "Unit Price";
+            allocatedList.Columns[3].Name = "Amount";
+            allocatedList.Columns[4].Name = "ID";
+            allocatedList.Columns[4].Visible = false;
+            using (var context = new Session6Entities())
+            {
+                var amount = Decimal.Parse(amtBox.Text);
+                var selectedPart = partBox.SelectedItem.ToString();
+                if (aMethodBox.SelectedItem.ToString() == "LIFO")
+                {
+                    var getPart = (from x in context.OrderItems
+                                   where x.Part.Name == selectedPart
+                                   orderby x.Order.Date descending
+                                   where x.Amount <= amount
+                                   select new { Name = x.Part.Name, BatchNumber = x.BatchNumber, unitPrice = x.UnitPrice, Amount = x.Amount, ID = x.ID });
+
+                    decimal amtToAdd = 0;
+                    while (amtToAdd <= amount)
+                    {
+                        foreach (var item in getPart)
+                        {
+                            List<string> rows = new List<string>() 
+                            { 
+                                item.Name, item.BatchNumber, item.unitPrice.ToString(), item.Amount.ToString(), item.ID.ToString()
+                            };
+
+                            amtToAdd += item.Amount;
+                            if (amtToAdd > amount) break;
+                            allocatedList.Rows.Add(rows.ToArray());
+                            
+                        }
+                    }
+
+                }
+                else if (aMethodBox.SelectedItem.ToString() == "FIFO")
+                {
+                    var getPart = (from x in context.OrderItems
+                                   where x.Part.Name == selectedPart
+                                   orderby x.Order.Date ascending
+                                   where x.Amount <= amount
+                                   select new { Name = x.Part.Name, BatchNumber = x.BatchNumber, unitPrice = x.UnitPrice, Amount = x.Amount, ID = x.ID });
+                    decimal amtToAdd = 0;
+                    while (amtToAdd <= amount)
+                    {
+                        foreach (var item in getPart)
+                        {
+                            List<string> rows = new List<string>()
+                            {
+                                item.Name, item.BatchNumber, item.unitPrice.ToString(), item.Amount.ToString(), item.ID.ToString()
+                            };
+
+                            amtToAdd += item.Amount;
+                            if (amtToAdd > amount) break;
+                            allocatedList.Rows.Add(rows.ToArray());
+
+                        }
+                    }
+                }
+                else
+                {
+                    var getPart = (from x in context.OrderItems
+                                   where x.Part.Name == selectedPart
+                                   orderby x.UnitPrice * x.Amount ascending
+                                   where x.Amount <= amount
+                                   select new { Name = x.Part.Name, BatchNumber = x.BatchNumber, unitPrice = x.UnitPrice, Amount = x.Amount, ID = x.ID });
+                    decimal amtToAdd = 0;
+                    while (amtToAdd <= amount)
+                    {
+                        foreach (var item in getPart)
+                        {
+                            List<string> rows = new List<string>()
+                            {
+                                item.Name, item.BatchNumber, item.unitPrice.ToString(), item.Amount.ToString(), item.ID.ToString()
+                            };
+
+                            amtToAdd += item.Amount;
+                            if (amtToAdd > amount) break;
+                            allocatedList.Rows.Add(rows.ToArray());
+
+                        }
+                    }
+                }
+            }
+
         }
 
         private void assignBtn_Click(object sender, EventArgs e)
@@ -63,17 +150,19 @@ namespace Session6
                 warehouseBox.Items.AddRange(getWarehouse.ToArray());
                 warehouseBox.SelectedItem = getWarehouse.First();
 
-                
+                List<string> vs = new List<string>()
+                {
+                    "LIFO", "FIFO", "Minimum Price"
+                };
+
+                aMethodBox.Items.AddRange(vs.ToArray());
+                aMethodBox.SelectedItem = vs[2];
 
             }
         }
 
         private void partBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-
-
-
-
 
         }
 
@@ -93,6 +182,7 @@ namespace Session6
                     var getParts = (from x in context.Orders
                                     where x.SourceWarehouseID == getWarehouseID
                                     join y in context.OrderItems on x.ID equals y.OrderID
+                                    where y.Amount != 0
                                     select y.Part.Name).Distinct();
                     List<string> partList = new List<string>();
                     foreach (var parts in getParts)
